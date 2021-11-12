@@ -30,4 +30,30 @@ class UserApiController extends Controller
 
         return $response;
     }
+    public static function readUser($link = "https://gorest.co.in/public/v1/users")
+    {
+        $url = $link;
+
+        $header = [
+            "Content-Type" => "application/json",
+            "Authorization" => "Bearer aabf9fa80a1c36b13895795d62510ae75d03d4f9571d6a3499ecc69bc37bcd27"
+        ];
+
+        $response =  Http::get($url)->json();
+
+        return $response;
+    }
+    public static function deleteUser($id)
+    {
+        $url = "https://gorest.co.in/public/v1/users/$id";
+
+        $header = [
+            "Content-Type" => "application/json",
+            "Authorization" => "Bearer aabf9fa80a1c36b13895795d62510ae75d03d4f9571d6a3499ecc69bc37bcd27"
+        ];
+
+        $response =  Http::withHeaders($header)->delete($url)->json();
+
+        return $response;
+    }
 }

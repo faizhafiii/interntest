@@ -21,3 +21,5 @@ Route::get('/', function () {
     return view('index');
 });
 Route::post('/create-form', [TestController::class, 'checkData'])->name('checkData');
+Route::post('/table-load', [TestController::class, 'tableLoad'])->name('tableLoad');
+Route::post('/delete-user', [TestController::class, 'deleteUser'])->name('deleteUser');

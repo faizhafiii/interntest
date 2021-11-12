@@ -9,7 +9,8 @@
     <link rel="stylesheet" href="https://www.w3schools.com/lib/w3-theme-black.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"
+        integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
     <style>
         html,
         body,
@@ -113,6 +114,55 @@
         tr:nth-child(even) {
             background-color: #dddddd;
         }
+
+        /* The Modal (background) */
+        .modal {
+            display: none;
+            /* Hidden by default */
+            position: fixed;
+            /* Stay in place */
+            z-index: 1;
+            /* Sit on top */
+            padding-top: 100px;
+            /* Location of the box */
+            left: 0;
+            top: 0;
+            width: 100%;
+            /* Full width */
+            height: 100%;
+            /* Full height */
+            overflow: auto;
+            /* Enable scroll if needed */
+            background-color: rgb(0, 0, 0);
+            /* Fallback color */
+            background-color: rgba(0, 0, 0, 0.4);
+            /* Black w/ opacity */
+        }
+
+        /* Modal Content */
+        .modal-content {
+            background-color: #fefefe;
+            margin: auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+        }
+
+        /* The Close Button */
+        .close {
+            color: #aaaaaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: #000;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
     </style>
 </head>
 
@@ -121,7 +171,8 @@
     <!-- Navbar -->
     <div class="w3-top">
         <div class="w3-bar w3-theme w3-top w3-left-align w3-large">
-            <a class="w3-bar-item w3-button w3-right w3-hide-large w3-hover-white w3-large w3-theme-l1" href="javascript:void(0)" onclick="w3_open()"><i class="fa fa-bars"></i></a>
+            <a class="w3-bar-item w3-button w3-right w3-hide-large w3-hover-white w3-large w3-theme-l1"
+                href="javascript:void(0)" onclick="w3_open()"><i class="fa fa-bars"></i></a>
             <a href="#" class="w3-bar-item w3-button w3-theme-l1">Home</a>
             <a href="#" class="w3-bar-item w3-button w3-hide-small w3-hover-white">About</a>
             <a href="#" class="w3-bar-item w3-button w3-hide-small w3-hover-white">Contact</a>
@@ -132,10 +183,9 @@
         </div>
     </div>
 
-
-
     <!-- Overlay effect when opening sidebar on small screens -->
-    <div class="w3-overlay w3-hide-large" onclick="w3_close()" style="cursor:pointer" title="close side menu" id="myOverlay"></div>
+    <div class="w3-overlay w3-hide-large" onclick="w3_close()" style="cursor:pointer" title="close side menu"
+        id="myOverlay"></div>
 
     <!-- Main content: shift it to the right by 250 pixels when the sidebar is visible -->
     <div class="w3-main">
@@ -172,49 +222,25 @@
 
 
 
-            <h2>Table Display Data</h2>
+            <div id="table-container">
 
-            <table>
-                <tr>
-                    <th>Username</th>
-                    <th>Contact</th>
-                    <th>Email</th>
-                    <th>Password</th>
-                    <th>Action</th>
-                </tr>
-                <tr>
-                    <td>user1</td>
-                    <td>number1</td>
-                    <td>user1@gmail</td>
-                    <td>u1</td>
-                    <td>Edit/Delete</td>
-                </tr>
-                <tr>
-                    <td>user2</td>
-                    <td>number2</td>
-                    <td>user2@gmail</td>
-                    <td>u2</td>
-                    <td>Edit/Delete</td>
-                </tr>
-                <tr>
-                    <td>user3</td>
-                    <td>number2</td>
-                    <td>user3@gmail</td>
-                    <td>u3</td>
-                    <td>Edit/Delete</td>
-                </tr>
-            </table>
+            </div>
+
+            <!-- The Modal -->
+            <div id="myModal" class="modal">
+
+                <!-- Modal content -->
+                <div class="modal-content">
+                    <span class="close">&times;</span>
+                    <p>Some text in the Modal..</p>
+                </div>
+
+            </div>
+
+
 
             <!-- Pagination -->
-            <div class="w3-center w3-padding-32">
-                <div class="w3-bar">
-                    <a class="w3-button w3-hover-black" href="#">«</a>
-                    <a class="w3-button w3-black" href="#">1</a>
-                    <a class="w3-button w3-hover-black" href="#">2</a>
-                    <a class="w3-button w3-hover-black" href="#">3</a>
-                    <a class="w3-button w3-hover-black" href="#">»</a>
-                </div>
-            </div>
+
 
             <footer id="myFooter">
                 <div class="w3-container w3-theme-l2 w3-padding-32">
@@ -258,7 +284,7 @@
 
             $.ajax({
                 type: "post",
-                url: "{{route('checkData')}}",
+                url: "{{ route('checkData') }}",
                 data: $(this).serialize(),
                 success: function(response) {
                     console.log(response)
@@ -266,6 +292,78 @@
             });
 
         });
+
+        function table_load(link = "https://gorest.co.in/public/v1/users") {
+
+            $.ajax({
+                type: "post",
+                url: "{{ route('tableLoad') }}",
+                data: {
+                    "_token": "{{ csrf_token() }}",
+                    "action": "load",
+                    "link": link
+                },
+                success: function(response) {
+                    $("#table-container").html(response['view']);
+                }
+            });
+        }
+        table_load()
+
+        $(document.body).on("click", "#btn-previous", function() {
+            var link = $(this).attr("data-link");
+            table_load(link)
+        });
+        $(document.body).on("click", "#btn-next", function() {
+            var link = $(this).attr("data-link");
+            table_load(link)
+        });
+        $(document.body).on("click", "#btn-delete", function() {
+            var id = $(this).attr("data-id");
+            var link = $(this).attr("data-link");
+            deleteUser(id, link)
+        });
+
+        function deleteUser(id, link) {
+            $.ajax({
+                type: "post",
+                url: "{{ route('deleteUser') }}",
+                data: {
+                    "_token": "{{ csrf_token() }}",
+                    "action": "delete",
+                    "id": id,
+                },
+                success: function(response) {
+                    table_load(link)
+                }
+            });
+        }
+
+        // Get the modal
+        var modal = document.getElementById("myModal");
+
+        // Get the button that opens the modal
+        var btn = document.getElementById("myBtn");
+
+        // Get the <span> element that closes the modal
+        var span = document.getElementsByClassName("close")[0];
+
+        // When the user clicks the button, open the modal 
+        btn.onclick = function() {
+            modal.style.display = "block";
+        }
+
+        // When the user clicks on <span> (x), close the modal
+        span.onclick = function() {
+            modal.style.display = "none";
+        }
+
+        // When the user clicks anywhere outside of the modal, close it
+        window.onclick = function(event) {
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        }
     </script>
 
 </body>

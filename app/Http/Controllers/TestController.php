@@ -30,4 +30,20 @@ class TestController extends Controller
 
         return $createUserResponse;
     }
+    public function tableLoad(Request $request)
+    {
+        $readUser = UserApiController::readUser($request->link);
+        return response()->json(
+            [
+                'status' => 'success',
+                'view' => view('table_data', ['readUser' => $readUser])->render()
+            ]
+        );
+    }
+    public function deleteUser(Request $request)
+    {
+        $deleteUser = UserApiController::deleteUser($request->id);
+
+        return $deleteUser;
+    }
 }
