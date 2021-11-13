@@ -23,3 +23,5 @@ Route::get('/', function () {
 Route::post('/create-form', [TestController::class, 'checkData'])->name('checkData');
 Route::post('/table-load', [TestController::class, 'tableLoad'])->name('tableLoad');
 Route::post('/delete-user', [TestController::class, 'deleteUser'])->name('deleteUser');
+Route::post('/edit-user', [TestController::class, 'editUser'])->name('editUser');
+Route::post('/filter-user', [TestController::class, 'filter'])->name('filter');

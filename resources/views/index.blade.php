@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"
         integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+    <script src="//cdn.jsdelivr.net/npm/sweetalert2@10"></script>
     <style>
         html,
         body,
@@ -189,7 +190,7 @@
 
     <!-- Main content: shift it to the right by 250 pixels when the sidebar is visible -->
     <div class="w3-main">
-        <div class="w3-row w3-padding-64">
+        <div class="w3-row w3-padding-64" style="padding-bottom: 0!important;">
 
             <!-- SILA BUAT REGISTER FORM -->
 
@@ -221,8 +222,23 @@
             <!-- SILA BUAT TABLE DISPLAY DATA -->
 
 
-
-            <div id="table-container">
+            <form id="filter" style="float: right;padding-right:20px">
+                <label>Filter: </label>
+                <label for="gender_filter">Gender:</label>
+                <select id="gender_filter" name="gender_filter">
+                    <option value="All">All</option>
+                    <option value="male">Male</option>
+                    <option value="female">Female</option>
+                </select>
+                <label for="status_filter">Status:</label>
+                <select id="status_filter" name="status_filter">
+                    <option value="All">All</option>
+                    <option value="active">Active</option>
+                    <option value="inactive">Inactive</option>
+                </select>
+                <button type="submit">Filter</button>
+            </form>
+            <div id="table-container" style="overflow-x: auto;width:100%">
 
             </div>
 
@@ -232,7 +248,41 @@
                 <!-- Modal content -->
                 <div class="modal-content">
                     <span class="close">&times;</span>
-                    <p>Some text in the Modal..</p>
+                    <form id="edit-form">
+                        @csrf
+                        <div class="container">
+                            <h1>Edit</h1>
+                            <p>Please fill in this form to edit your account.</p>
+                            <hr>
+
+                            <input style="display: none" name="user_id" id="user_id">
+                            <input style="display: none" name="current_link" id="current_link">
+
+                            <label for="name_edit"><b>Name</b></label>
+                            <input type="text" placeholder="Enter Name" name="name_edit" id="name_edit" required>
+
+                            <label for="email_edit"><b>Email</b></label>
+                            <input type="email" placeholder="Enter Email" name="email_edit" id="email_edit" required>
+
+                            <label><b>Gender</b></label>
+                            <input class="w3-radio" type="radio" name="gender_edit" value="male">
+                            <label>Male</label>
+
+                            <input class="w3-radio" type="radio" name="gender_edit" value="female">
+                            <label>Female</label>
+                            <br><br>
+                            <label><b>Status</b></label>
+                            <input class="w3-radio" type="radio" name="status" value="active">
+                            <label>Active</label>
+
+                            <input class="w3-radio" type="radio" name="status" value="inactive">
+                            <label>Inactive</label>
+
+
+
+                            <button type="submit" class="registerbtn">Confirm Edit</button>
+                        </div>
+                    </form>
                 </div>
 
             </div>
@@ -288,12 +338,39 @@
                 data: $(this).serialize(),
                 success: function(response) {
                     console.log(response)
+                    Swal.fire({
+                        title: "Successfully Registered",
+                        html: '<div class="border rounded m-2 p-3 text-start">' +
+                            '<b>ID:</b>' +
+                            '<div>' + response["data"]["id"] + '</div>' +
+                            '<br>' +
+                            '<b>Name:</b>' +
+                            '<div>' + response["data"]["name"] + '</div>' +
+                            '<br>' +
+                            '<b>Email:</b>' +
+                            '<div>' + response["data"]["email"] +
+                            '</div>' +
+                            '<br>' +
+                            '<b>Gender:</b>' +
+                            '<div>' + response["data"]["gender"] +
+                            '</div>' +
+                            '<br>' +
+                            '<b>Status:</b>' +
+                            '<div>' + response["data"]["status"] +
+                            '</div>' +
+                            '</div>',
+                        icon: "success",
+                        allowOutsideClick: false,
+                        buttons: {
+                            confirm: "Okay"
+                        }
+                    })
                 }
             });
 
         });
 
-        function table_load(link = "https://gorest.co.in/public/v1/users") {
+        function table_load(link = "https://gorest.co.in/public/v1/users?page=1&gender=&status=") {
 
             $.ajax({
                 type: "post",
@@ -318,7 +395,7 @@
             var link = $(this).attr("data-link");
             table_load(link)
         });
-        $(document.body).on("click", "#btn-delete", function() {
+        $(document.body).on("click", ".btn-delete", function() {
             var id = $(this).attr("data-id");
             var link = $(this).attr("data-link");
             deleteUser(id, link)
@@ -340,30 +417,82 @@
         }
 
         // Get the modal
-        var modal = document.getElementById("myModal");
-
-        // Get the button that opens the modal
-        var btn = document.getElementById("myBtn");
+        var modal = $("#myModal");
 
         // Get the <span> element that closes the modal
-        var span = document.getElementsByClassName("close")[0];
-
-        // When the user clicks the button, open the modal 
-        btn.onclick = function() {
-            modal.style.display = "block";
-        }
-
+        var span = $(".close");
         // When the user clicks on <span> (x), close the modal
-        span.onclick = function() {
-            modal.style.display = "none";
+        span.click(function() {
+            modal.css("display", "none");
+        })
+        // When the user clicks anywhere outside of the modal, close it
+        $(window).click(function(event) {
+            if (event.target == modal) {
+                modal.css("display", "none");
+            }
+        })
+
+        $(document.body).on("click", ".btn-edit", function() {
+
+            $("#user_id").val($(this).attr("data-id"));
+            $("#current_link").val($(this).attr("data-link"));
+            $("#name_edit").val($(this).attr("data-name"));
+            $("#email_edit").val($(this).attr("data-email"));
+            var gender = $(this).attr("data-gender")
+            var status = $(this).attr("data-status")
+            $("input[name=gender_edit][value=" + gender + "]").prop('checked', true);
+            $("input[name=status][value=" + status + "]").prop('checked', true);
+
+            // Get the button that opens the modal
+            var btn = $(".btn-edit");
+
+            // When the user clicks the button, open the modal 
+            // btn.click(function() {
+            modal.css("display", "block");
+            // })
+
+        });
+
+        $("#edit-form").submit(function(e) {
+            e.preventDefault();
+            var link = $("#current_link").val();
+            $.ajax({
+                type: "post",
+                url: "{{ route('editUser') }}",
+                data: $(this).serialize(),
+                success: function(response) {
+                    console.log(response)
+                    table_load(link)
+                    modal.css("display", "none");
+                }
+            });
+
+        });
+
+        function filter(link = "https://gorest.co.in/public/v1/users", gender, status) {
+
+            $.ajax({
+                type: "post",
+                url: "{{ route('filter') }}",
+                data: {
+                    "_token": "{{ csrf_token() }}",
+                    "action": "filter",
+                    "link": link,
+                    "gender": gender,
+                    "status": status,
+                },
+                success: function(response) {
+                    $("#table-container").html(response['view']);
+                }
+            });
         }
 
-        // When the user clicks anywhere outside of the modal, close it
-        window.onclick = function(event) {
-            if (event.target == modal) {
-                modal.style.display = "none";
-            }
-        }
+        $("#filter").submit(function(e) {
+            e.preventDefault();
+            var gender = $("#gender_filter").val();
+            var status = $("#status_filter").val();
+            filter(link = "https://gorest.co.in/public/v1/users", gender, status)
+        });
     </script>
 
 </body>
